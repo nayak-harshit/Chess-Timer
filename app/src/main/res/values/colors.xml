@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="running_clock">#7E82DF</color>
+    <color name="app_background">#DBF2F9</color>
+    <color name="not_running_clock">#798283</color>
+    <color name="status_bar">#808FF7</color>
 </resources>
