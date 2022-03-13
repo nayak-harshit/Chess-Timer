@@ -1,0 +1,49 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/time_header">
+
+        <EditTextPreference
+            app:key="startTimeInMillis"
+            app:title="@string/start_time"
+            app:useSimpleSummaryProvider="true" />
+
+        <CheckBoxPreference
+            app:key="sameStartTime"
+            app:title="@string/same_time"
+            android:defaultValue="false"/>
+
+        <EditTextPreference
+            android:dependency="sameStartTime"
+            app:key="p1StartTime"
+            app:title="@string/p1_start_time"/>
+
+        <EditTextPreference
+            android:dependency="sameStartTime"
+            app:key="p2StartTime"
+            app:title="@string/p2_start_time"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/media_header">
+
+        <SwitchPreferenceCompat
+            app:key="soundOn"
+            app:title="@string/sound_title" />
+
+        <SwitchPreferenceCompat
+            app:key="vibrateOn"
+            app:title="@string/vibrate_title" />
+
+        <SwitchPreferenceCompat
+            app:key="finishSound"
+            app:summary="@string/finish_summary"
+            app:summaryOn="@string/finish_summary"
+            app:title="@string/finish_title" />
+
+    </PreferenceCategory>
+
+
+
+
+</PreferenceScreen>

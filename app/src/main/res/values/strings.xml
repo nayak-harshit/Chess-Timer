@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Chess Timer</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="time_header">Time Management</string>
+    <string name="media_header">Media Controls</string>
+
+    <!-- Time Preferences -->
+    <string name="start_time">Start time in Milliseconds</string>
+    <string name="reply_title">Default reply action</string>
+    <string name="same_time"> Start with different times</string>
+    <string name="p1_start_time">Start Time for Player1</string>
+    <string name="p2_start_time">Start Time for Player2</string>
+
+    <!-- Sync Preferences -->
+    <string name="sound_title">Sound effects</string>
+    <string name="vibrate_title">Vibrate</string>
+    <string name="finish_title">Match finish Tune
+    </string>
+    <string name="finish_summary"> Play sound when the match finishes </string>
+    <string name="player1">Player 1</string>
+    <string name="player2">Player 2</string>
+
 </resources>
