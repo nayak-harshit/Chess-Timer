@@ -12,6 +12,7 @@
 
     <TextView
         android:id="@+id/textView"
+        android:onClick="player1OnClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
@@ -20,7 +21,7 @@
         android:layout_marginRight="10sp"
         android:layout_weight="1"
         android:height="250sp"
-        android:background="@drawable/not_running_clock_background"
+        android:background="@drawable/running_clock_background"
         android:elevation="5sp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
@@ -36,7 +37,7 @@
         android:layout_marginRight="30sp"
         android:gravity="left"
         android:rotation="180"
-        android:text="Moves: 0"
+        android:text="Moves: 00"
         android:textSize="20sp"
         android:fontFamily="serif-monospace"
         />
@@ -65,14 +66,17 @@
             android:layout_marginEnd="20sp"
             android:visibility="invisible"
             app:srcCompat="@drawable/pause_icon"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            android:onClick="pauseOnClick"
+            />
 
         <ImageButton
             android:id="@+id/imageButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20sp"
-            app:srcCompat="@drawable/reset_icon" />
+            app:srcCompat="@drawable/reset_icon"
+            android:onClick="resetOnClick"/>
     </LinearLayout>
 
     <TextView
@@ -80,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30sp"
-        android:text="Moves: 0"
+        android:text="Moves: 00"
         android:textSize="20sp"
         android:fontFamily="serif-monospace"
 
@@ -89,6 +93,7 @@
 
     <TextView
         android:id="@+id/textView3"
+        android:onClick="player2OnClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -98,7 +103,7 @@
         android:layout_marginBottom="10sp"
         android:layout_weight="1"
         android:height="250sp"
-        android:background="@drawable/not_running_clock_background"
+        android:background="@drawable/running_clock_background"
         android:elevation="5sp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"

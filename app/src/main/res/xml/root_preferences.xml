@@ -4,24 +4,31 @@
     <PreferenceCategory app:title="@string/time_header">
 
         <EditTextPreference
+
             app:key="startTimeInMillis"
             app:title="@string/start_time"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            android:dialogLayout="@layout/preference_edit_text"
+            />
 
         <CheckBoxPreference
-            app:key="sameStartTime"
+            app:key="startWithDifferentTime"
             app:title="@string/same_time"
             android:defaultValue="false"/>
 
         <EditTextPreference
-            android:dependency="sameStartTime"
+            android:dependency="startWithDifferentTime"
             app:key="p1StartTime"
-            app:title="@string/p1_start_time"/>
+            app:title="@string/p1_start_time"
+            app:useSimpleSummaryProvider="true"
+            android:dialogLayout="@layout/preference_edit_text"/>
 
         <EditTextPreference
-            android:dependency="sameStartTime"
+            android:dependency="startWithDifferentTime"
             app:key="p2StartTime"
-            app:title="@string/p2_start_time"/>
+            app:title="@string/p2_start_time"
+            app:useSimpleSummaryProvider="true"
+            android:dialogLayout="@layout/preference_edit_text"/>
 
     </PreferenceCategory>
 
