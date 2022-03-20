@@ -111,5 +111,14 @@
         android:textColor="@color/black"
         android:textSize="65sp" />
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:visibility="gone"
+        android:onClick="onMatchFinish"
+        />
+
 
 </LinearLayout>
