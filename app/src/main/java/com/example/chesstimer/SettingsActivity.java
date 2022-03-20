@@ -12,7 +12,7 @@ import androidx.preference.PreferenceFragmentCompat;
 public class SettingsActivity extends AppCompatActivity {
 
  // Keys:
-    public static final String KEY_START_TIME_IN_MILLIS = "startTimeInMillis";
+    public static final String KEY_START_TIME_IN_SECONDS = "startTimeInSeconds";
     public static final String KEY_SAME_START_TIME = "startWithDifferentTime";
     public static final String KEY_P1_START_TIME = "p1StartTime";
     public static final String KEY_P2_START_TIME = "p2StartTime";

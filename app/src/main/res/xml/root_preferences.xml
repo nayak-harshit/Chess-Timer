@@ -5,7 +5,7 @@
 
         <EditTextPreference
 
-            app:key="startTimeInMillis"
+            app:key="startTimeInSeconds"
             app:title="@string/start_time"
             app:useSimpleSummaryProvider="true"
             android:dialogLayout="@layout/preference_edit_text"
@@ -46,7 +46,9 @@
             app:key="finishSound"
             app:summary="@string/finish_summary"
             app:summaryOn="@string/finish_summary"
-            app:title="@string/finish_title" />
+            app:title="@string/finish_title"
+            
+            />
 
     </PreferenceCategory>
 

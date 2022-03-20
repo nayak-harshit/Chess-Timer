@@ -4,14 +4,13 @@ import static java.lang.String.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -30,7 +29,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "tag";
-    TextView p1TextBox, p2TextBox, p1MoveBox, p2MoveBox, p1timeLeft, p1move, p1timePerMove, p2timeLeft, p2move, p2timePerMove ;
+    TextView p1TextBox, p2TextBox, p1MoveBox, p2MoveBox, p1timeLeft, p1move, p1timePerMove, p2timeLeft, p2move, p2timePerMove;
     ImageButton setting, pause, reset;
     // this button is used to call the finish
     Button button2;
@@ -60,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private static String p1TimeFormatted;
     private static String p2TimeFormatted;
 
-//    private MediaPlayer mp;
-    Vibrator vibrator;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,42 +73,10 @@ public class MainActivity extends AppCompatActivity {
         p1MoveBox = findViewById(R.id.textView2);
         p2MoveBox = findViewById(R.id.textView4);
         pause = findViewById(R.id.imageButton2);
-        button2 = findViewById(R.id.button2);
+//        button2 = findViewById(R.id.button2);
 
 
-
-//        setting = findViewById(R.id.imageButton);
-//        reset = findViewById(R.id.imageButton3);
-
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        startTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_START_TIME_IN_MILLIS, "600000"));
-        startWithDifferentTime = sharedPref.getBoolean(SettingsActivity.KEY_SAME_START_TIME, true);
-
-
-        if (startWithDifferentTime) {
-            p1StartTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P1_START_TIME, "600000"));
-            ;
-            p2StartTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P2_START_TIME, "600000"));
-        } else {
-            p1StartTimeInMillis = startTimeInMillis;
-            p2StartTimeInMillis = startTimeInMillis;
-        }
-
-        p1TimeLeftInMillis = p1StartTimeInMillis;
-        p2TimeLeftInMillis = p2StartTimeInMillis;
-
-        isSoundOn = sharedPref.getBoolean(SettingsActivity.KEY_SOUND_ON, true);
-        isVibrateOn = sharedPref.getBoolean(SettingsActivity.KEY_VIBRATE_ON, false);
-        finishSoundOn = sharedPref.getBoolean(SettingsActivity.KEY_MATCH_FINISH_SOUND, true);
-
-        numberOfMovesP1 = 0;
-        numberOfMovesP2 = 0;
-        onTheClock = 0;
-
-//        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
+        resetBothTimer();
 
         Log.d(TAG, "onCreate:");
         Log.d("TAG", "onCreate: startTimeInMillis " + startTimeInMillis);
@@ -121,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: p2StartTimeInMillis " + p2StartTimeInMillis);
         Log.d(TAG, "onCreate: ontheClock" + onTheClock);
 
-        updateCountDownText();
 
         //testing-
 //        Log.d(TAG, "onCreate: starting both the timers");
@@ -207,32 +170,90 @@ public class MainActivity extends AppCompatActivity {
         resetBothTimer();
     }
 
-    public void onMatchFinish(View view) {
+//    public void onMatchFinish(View view) {
+//
+//        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View popupView = inflater.inflate(R.layout.popup_window, null);
+//
+//        setOnFinishCounter();
+//
+//
+//        // create the popup window
+//        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+//        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+//        boolean focusable = true; // lets taps outside the popup also dismiss it
+//        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+//
+//        // show the popup window
+//        // which view you pass in doesn't matter, it is only used for the window tolken
+//        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+//
+//
+//        popupView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+////                resetBothTimer();
+//                popupWindow.dismiss();
+//                return true;
+//            }
+//        });
+//
+//    }
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window, null);
 
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+    public void showCustomDialog() {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        //We have added a title in the custom layout. So let's disable the default title.
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //The user will be able to cancel the dialog bu clicking anywhere outside the dialog.
+        dialog.setCancelable(true);
+        //Mention the name of the layout of your custom dialog.
+        dialog.setContentView(R.layout.popup_window);
 
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+//        setOnFinishCounter();
 
-        setOnFinishCounter();
+        p1timeLeft = (TextView) dialog.findViewById(R.id.p1TimeLeft);
+        p1move = (TextView) dialog.findViewById(R.id.p1MoveLeft);
+        p1timePerMove = (TextView) dialog.findViewById(R.id.p1TimePerMove);
+        p2timeLeft = (TextView) dialog.findViewById(R.id.p2TimeLeft);
+        p2move = (TextView) dialog.findViewById(R.id.p2MoveLeft);
+        p2timePerMove = (TextView) dialog.findViewById(R.id.p2TimePerMove);
 
-        popupView.setOnTouchListener(new View.OnTouchListener() {
+        p1timeLeft.setText(p1TimeFormatted);
+        p2timeLeft.setText(p2TimeFormatted);
+
+//        Log.d(TAG, "setOnFinishCounter: p1TimeFormatted "+ p1TimeFormatted);
+//        Log.d(TAG, "setOnFinishCounter: numberOfMovesP1 "+ numberOfMovesP1);
+
+
+        p1move.setText(format(" %02d", numberOfMovesP1));
+        p2move.setText(format(" %02d", numberOfMovesP2));
+
+        // time taken per move
+
+        long p1TimePerMoveInMillis = p1StartTimeInMillis / numberOfMovesP1;
+        long p2TimePerMoveInMillis = p2StartTimeInMillis / numberOfMovesP2;
+
+        int p1MinutesPerMove = (int) (p1TimePerMoveInMillis / 1000) / 60;
+        int p1SecondsPerMove = (int) (p1TimePerMoveInMillis / 1000) % 60;
+
+        int p2MinutesPerMove = (int) (p2TimePerMoveInMillis / 1000) / 60;
+        int p2SecondsPerMove = (int) (p2TimePerMoveInMillis / 1000) % 60;
+
+        p1timePerMove.setText(format("%02d:%02d", p1MinutesPerMove, p1SecondsPerMove));
+        p2timePerMove.setText(format("%02d:%02d", p2MinutesPerMove, p2SecondsPerMove));
+
+
+        Button resetButton = dialog.findViewById(R.id.button);
+
+        resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-//                resetBothTimer();
-                popupWindow.dismiss();
-                return true;
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
 
+        dialog.show();
     }
 
 
@@ -260,9 +281,13 @@ public class MainActivity extends AppCompatActivity {
 
                 finalSound(finishSoundOn);
 
-//                onMatchFinish(null);
+                showCustomDialog();
+//                button2.performClick();
+//                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//                View popupView = inflater.inflate(R.layout.popup_window, null);
+//                onMatchFinish(popupView);
 
-                button2.performClick();
+
                 resetBothTimer();
 //                setOnFinishCounter();
 
@@ -310,8 +335,14 @@ public class MainActivity extends AppCompatActivity {
 
                 finalSound(finishSoundOn);
 
+                showCustomDialog();
+
 //                onMatchFinish(null);
-                button2.performClick();
+//                button2.performClick();
+//                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+//                View popupView = inflater.inflate(R.layout.popup_window, null);
+//                onMatchFinish(popupView);
+
                 resetBothTimer();
 //                setOnFinishCounter();
             }
@@ -336,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
 //        p2TextBox.setBackground(this.getDrawable(R.drawable.running_clock_background));
     }
 
-    public void resetBothTimer()   {
+    public void resetBothTimer() {
         p1TextBox.setBackground(this.getDrawable(R.drawable.running_clock_background));
         p2TextBox.setBackground(this.getDrawable(R.drawable.running_clock_background));
 
@@ -348,14 +379,13 @@ public class MainActivity extends AppCompatActivity {
         }
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        startTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_START_TIME_IN_MILLIS, "600000"));
+        startTimeInMillis = 1000 * Long.parseLong(sharedPref.getString(SettingsActivity.KEY_START_TIME_IN_SECONDS, "60"));
         startWithDifferentTime = sharedPref.getBoolean(SettingsActivity.KEY_SAME_START_TIME, true);
 
 
         if (startWithDifferentTime) {
-            p1StartTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P1_START_TIME, "600000"));
-            ;
-            p2StartTimeInMillis = Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P2_START_TIME, "600000"));
+            p1StartTimeInMillis = 1000 * Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P1_START_TIME, "60"));
+            p2StartTimeInMillis = 1000 * Long.parseLong(sharedPref.getString(SettingsActivity.KEY_P2_START_TIME, "60"));
         } else {
             p1StartTimeInMillis = startTimeInMillis;
             p2StartTimeInMillis = startTimeInMillis;
@@ -364,9 +394,14 @@ public class MainActivity extends AppCompatActivity {
         p1TimeLeftInMillis = p1StartTimeInMillis;
         p2TimeLeftInMillis = p2StartTimeInMillis;
 
+        isSoundOn = sharedPref.getBoolean(SettingsActivity.KEY_SOUND_ON, true);
+        isVibrateOn = sharedPref.getBoolean(SettingsActivity.KEY_VIBRATE_ON, false);
+        finishSoundOn = sharedPref.getBoolean(SettingsActivity.KEY_MATCH_FINISH_SOUND, true);
+
         numberOfMovesP1 = 0;
         numberOfMovesP2 = 0;
         onTheClock = 0;
+
         updateCountDownText();
 
     }
@@ -381,8 +416,8 @@ public class MainActivity extends AppCompatActivity {
         int p2Seconds = (int) (p2TimeLeftInMillis / 1000) % 60;
 //        int p2MilliSeconds = (int) (p2TimeLeftInMillis % TICK_LENGTH);
 
-         p1TimeFormatted = format("%02d:%02d", p1Minutes, p1Seconds);
-         p2TimeFormatted = format("%02d:%02d", p2Minutes, p2Seconds);
+        p1TimeFormatted = format("%02d:%02d", p1Minutes, p1Seconds);
+        p2TimeFormatted = format("%02d:%02d", p2Minutes, p2Seconds);
 
         p1TextBox.setText(p1TimeFormatted);
         p2TextBox.setText(p2TimeFormatted);
@@ -393,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setOnFinishCounter(){
+    public void setOnFinishCounter() {
 //        setContentView(R.layout.popup_window);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_window, null);
@@ -408,18 +443,26 @@ public class MainActivity extends AppCompatActivity {
         p2move = (TextView) popupView.findViewById(R.id.p2MoveLeft);
         p2timePerMove = (TextView) popupView.findViewById(R.id.p2TimePerMove);
 
-        Log.d(TAG, "setOnFinishCounter: "+ p1timeLeft.getText());
+//        Log.d(TAG, "setOnFinishCounter: "+ p1timeLeft.getText());
+        Log.d(TAG, "setOnFinishCounter: p1TimeFormatted " + p1TimeFormatted);
+        Log.d(TAG, "setOnFinishCounter: numberOfMovesP1 " + numberOfMovesP1);
+
+        p1timeLeft.setText("this is set text");
 
         p1timeLeft.setText(p1TimeFormatted);
         p2timeLeft.setText(p2TimeFormatted);
 
-        p1move.setText(format(" %0d",numberOfMovesP1));
-        p2move.setText(format(" %0d",numberOfMovesP2));
+//        Log.d(TAG, "setOnFinishCounter: p1TimeFormatted "+ p1TimeFormatted);
+//        Log.d(TAG, "setOnFinishCounter: numberOfMovesP1 "+ numberOfMovesP1);
+
+
+        p1move.setText(format(" %02d", numberOfMovesP1));
+        p2move.setText(format(" %02d", numberOfMovesP2));
 
         // time taken per move
 
-        long p1TimePerMoveInMillis = p1TimeLeftInMillis/numberOfMovesP1;
-        long p2TimePerMoveInMillis = p2TimeLeftInMillis/numberOfMovesP2;
+        long p1TimePerMoveInMillis = p1TimeLeftInMillis / numberOfMovesP1;
+        long p2TimePerMoveInMillis = p2TimeLeftInMillis / numberOfMovesP2;
 
         int p1MinutesPerMove = (int) (p1TimePerMoveInMillis / 1000) / 60;
         int p1SecondsPerMove = (int) (p1TimePerMoveInMillis / 1000) % 60;
@@ -427,25 +470,22 @@ public class MainActivity extends AppCompatActivity {
         int p2MinutesPerMove = (int) (p2TimePerMoveInMillis / 1000) / 60;
         int p2SecondsPerMove = (int) (p2TimePerMoveInMillis / 1000) % 60;
 
-        p1timePerMove.setText( format("%02d:%02d", p1MinutesPerMove, p1SecondsPerMove));
-        p2timePerMove.setText( format("%02d:%02d", p2MinutesPerMove, p2SecondsPerMove));
+        p1timePerMove.setText(format("%02d:%02d", p1MinutesPerMove, p1SecondsPerMove));
+        p2timePerMove.setText(format("%02d:%02d", p2MinutesPerMove, p2SecondsPerMove));
+
     }
 
     public void tickSound(Boolean isSoundOn) {
         if (!isSoundOn) return;
 
-       MediaPlayer mp = MediaPlayer.create(this, R.raw.tick_sound);
-//        try {
-//            mp.pause();
-//        } catch (Exception e) {
-//            Log.d(TAG, "tickSound: " + e);
-//        }
-        mp.start();
+        MediaPlayer mediaPlayer = MediaPlayer.create(this.getBaseContext(), R.raw.tick_sound);
+        mediaPlayer.start();
     }
 
     public void vibrateOn(Boolean isVibrateOn) {
         if (!isVibrateOn) return;
 
+        Vibrator vibrator;
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         try {
             vibrator.cancel();
@@ -457,13 +497,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void finalSound(Boolean finishSoundOn) {
         if (!finishSoundOn) return;
-
-       MediaPlayer mp = MediaPlayer.create(this, R.raw.time_up_sound);
-//        try {
-//            mp.pause();
-//        } catch (Exception e) {
-//            Log.d(TAG, "tickSound: " + e);
-//        }
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.time_up_sound);
         mp.start();
     }
 

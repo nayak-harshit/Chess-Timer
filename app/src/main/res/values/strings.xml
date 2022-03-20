@@ -7,7 +7,7 @@
     <string name="media_header">Media Controls</string>
 
     <!-- Time Preferences -->
-    <string name="start_time">Start time in Milliseconds</string>
+    <string name="start_time">Start time in Seconds</string>
     <string name="reply_title">Default reply action</string>
     <string name="same_time"> Start with different times</string>
     <string name="p1_start_time">Start Time for Player1</string>
