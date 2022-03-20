@@ -21,5 +21,10 @@
     <string name="finish_summary"> Play sound when the match finishes </string>
     <string name="player1">Player 1</string>
     <string name="player2">Player 2</string>
+    <string name="match_timed_out">Match Timed Out</string>
+    <string name="moves">Moves: </string>
+    <string name="time_taken_per_move">Time taken per Move: </string>
+    <string name="time_left">Time Left:</string>
+
 
 </resources>

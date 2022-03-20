@@ -4,16 +4,27 @@ import static java.lang.String.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private int numberOfMovesP1;
     private int numberOfMovesP2;
     private int onTheClock;
+
+    private MediaPlayer mp;
+    Vibrator vibrator;
 
 
     @Override
@@ -97,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: startWithDifferentTime " + startWithDifferentTime);
         Log.d(TAG, "onCreate: p1StartTimeInMillis " + p1StartTimeInMillis);
         Log.d(TAG, "onCreate: p2StartTimeInMillis " + p2StartTimeInMillis);
-        Log.d(TAG, "onCreate: ontheClock"+ onTheClock);
+        Log.d(TAG, "onCreate: ontheClock" + onTheClock);
 
         updateCountDownText();
 
@@ -118,14 +132,17 @@ public class MainActivity extends AppCompatActivity {
 //            return;
 //        }
 
-        if(numberOfMovesP1 == 0 && numberOfMovesP2 == 0 && onTheClock == 0){
+        if (numberOfMovesP1 == 0 && numberOfMovesP2 == 0 && onTheClock == 0) {
             Log.d(TAG, "player1OnClick: First Move");
         }
 
         if (onTheClock == 2) return;
 
-       p1PauseTimer();
-       p2StartTimer();
+        p1PauseTimer();
+        p2StartTimer();
+
+        tickSound(isSoundOn);
+        vibrateOn(isVibrateOn);
 
 //        Log.d(TAG, "player1OnClick: playing Sound");
 //
@@ -145,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 //            Log.d(TAG, "player2OnClick: first Move OnTheClock " + onTheClock);
 //            return;
 //        }
-        if(numberOfMovesP1 == 0 && numberOfMovesP2 == 0 && onTheClock == 0){
+        if (numberOfMovesP1 == 0 && numberOfMovesP2 == 0 && onTheClock == 0) {
             Log.d(TAG, "player2OnClick: First Move");
         }
 
@@ -156,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
 
         pause.setVisibility(View.VISIBLE);
 
+        tickSound(isSoundOn);
+        vibrateOn(isVibrateOn);
 
         Log.d(TAG, "player2OnClick: OnTheClock " + onTheClock);
 
@@ -166,21 +185,51 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void pauseOnClick(View view){
-        try{
+    public void pauseOnClick(View view) {
+        try {
             p1CountDownTimer.cancel();
             p2CountDownTimer.cancel();
-        }catch (Exception e){
-            Log.d(TAG, "pauseOnClick: " +e);
+        } catch (Exception e) {
+            Log.d(TAG, "pauseOnClick: " + e);
         }
         pause.setVisibility(View.INVISIBLE);
     }
 
-    public void resetOnClick(View view){
-       resetBothTimer();
+    public void resetOnClick(View view) {
+        resetBothTimer();
     }
 
-    public void onMatchFinish(){
+    public void onMatchFinish(View view) {
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBothTimer();
+                popupWindow.dismiss();
+            }
+        });
 
     }
 
@@ -188,8 +237,8 @@ public class MainActivity extends AppCompatActivity {
     //Timer methods
     public void p1StartTimer() {
         Log.d(TAG, "p1StartTimer: ");
-        Log.d(TAG, "p1StartTimer: p1TimeLeftInMillis "+p1TimeLeftInMillis);
-        Log.d(TAG, "p1StartTimer: p2TimeLeftInMillis "+ p2TimeLeftInMillis);
+        Log.d(TAG, "p1StartTimer: p1TimeLeftInMillis " + p1TimeLeftInMillis);
+        Log.d(TAG, "p1StartTimer: p2TimeLeftInMillis " + p2TimeLeftInMillis);
 
 
         p1CountDownTimer = new CountDownTimer(p1TimeLeftInMillis, TICK_LENGTH) {
@@ -205,7 +254,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onFinish: finished p1 countdown");
 //                p1TextBox.setText("00:00:00");
                 p1TimeLeftInMillis = 0;
-                Log.d(TAG, "onFinish: p1TimeLeftInMillis "+p1TimeLeftInMillis);
+                Log.d(TAG, "onFinish: p1TimeLeftInMillis " + p1TimeLeftInMillis);
+
+                finalSound(finishSoundOn);
+
+                onMatchFinish(null);
 
             }
         }.start();
@@ -231,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
     public void p2StartTimer() {
 
         Log.d(TAG, "p2StartTimer: ");
-        Log.d(TAG, "p2StartTimer: p2TimeLeftInMillis "+p2TimeLeftInMillis);
-        Log.d(TAG, "p2StartTimer: p1TimeLeftInMillis"+p1TimeLeftInMillis);
+        Log.d(TAG, "p2StartTimer: p2TimeLeftInMillis " + p2TimeLeftInMillis);
+        Log.d(TAG, "p2StartTimer: p1TimeLeftInMillis" + p1TimeLeftInMillis);
 
         p2CountDownTimer = new CountDownTimer(p2TimeLeftInMillis, TICK_LENGTH) {
             @Override
@@ -247,7 +300,11 @@ public class MainActivity extends AppCompatActivity {
                 //                p2TextBox.setText("00:00:00");
                 p2TimeLeftInMillis = 0;
                 Log.d(TAG, "onFinish: finished p2 countdown");
-                Log.d(TAG, "onFinish: p2TimeLeftInMillis "+p2TimeLeftInMillis);
+                Log.d(TAG, "onFinish: p2TimeLeftInMillis " + p2TimeLeftInMillis);
+
+                finalSound(finishSoundOn);
+
+                onMatchFinish(null);
 
             }
         }.start();
@@ -278,8 +335,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             p1PauseTimer();
             p2PauseTimer();
-        }catch (Exception e){
-            Log.d(TAG, "resetOnClick: "+e);
+        } catch (Exception e) {
+            Log.d(TAG, "resetOnClick: " + e);
         }
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -328,16 +385,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void tickSound(Boolean isSoundOn){
+    public void tickSound(Boolean isSoundOn) {
+        if (!isSoundOn) return;
 
+        mp = MediaPlayer.create(this, R.raw.tick_sound);
+        try {
+            mp.pause();
+        } catch (Exception e) {
+            Log.d(TAG, "tickSound: " + e);
+        }
+        mp.start();
     }
 
-    public void vibrateOn(Boolean isVibrateOn){
+    public void vibrateOn(Boolean isVibrateOn) {
+        if (!isVibrateOn) return;
 
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        try {
+            vibrator.cancel();
+        } catch (Exception e) {
+            Log.d(TAG, "vibrateOn: " + e);
+        }
+        vibrator.vibrate(100);
     }
 
-    public void finalSound(Boolean finishSoundOn){
+    public void finalSound(Boolean finishSoundOn) {
+        if (!finishSoundOn) return;
 
+        mp = MediaPlayer.create(this, R.raw.time_up_sound);
+        try {
+            mp.pause();
+        } catch (Exception e) {
+            Log.d(TAG, "tickSound: " + e);
+        }
+        mp.start();
     }
 
     /*@TODO */
